@@ -1,0 +1,25 @@
+services:
+  dev:
+    container_name: python_api_dev
+    build:
+      context: .
+      dockerfile: docker/dev/Dockerfile
+    platform: linux/amd64
+    volumes:
+      - './:/var/code'
+    working_dir: '/var/code'
+    command: [ '/bin/sh', '-c', 'tail -f /dev/null' ]
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - "8080:8080"
+  dynamodb:
+    container_name: python_api_dynamodb
+    image: 'amazon/dynamodb-local:latest'
+    volumes:
+      - './dist/dynamodb:/home/dynamodblocal/data'
+    command: [ '-jar', 'DynamoDBLocal.jar', '-sharedDb', '-dbPath', './data' ]
+    restart: always
+    ports:
+      - "8000:8000"
